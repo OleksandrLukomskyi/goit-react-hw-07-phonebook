@@ -2,35 +2,28 @@ import { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import css from './ContactForm.module.css';
-import { addContactAction } from 'store/contact/sliceContact';
+
 import { nanoid } from '@reduxjs/toolkit';
+import { addContactPostThunk } from 'store/contacts/thunksContacts';
+import { selectorContacts } from 'store/contacts/selector';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
+
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contact.contacts);
+  const items = useSelector(selectorContacts);
 
   const handleChange = e => {
     const { name, value } = e.target;
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-      case 'number':
-        setNumber(value);
-        break;
-      default:
-        return;
-    }
+    name === 'name' ? setName(value) : setPhone(value);
   };
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const isExist = contacts.some(
-      contact =>
-        contact.name === name.trim() || contact.number === number.trim()
+    const isExist = items.some(
+      item => item.name === name.trim() || item.phone === phone.trim()
     );
 
     if (isExist) {
@@ -41,12 +34,12 @@ const ContactForm = () => {
     const newContact = {
       id: nanoid(),
       name: name.trim(),
-      number: number.trim(),
+      phone: phone.trim(),
     };
 
-    dispatch(addContactAction(newContact));
+    dispatch(addContactPostThunk(newContact));
 
-    setNumber('');
+    setPhone('');
     setName('');
 
     e.target.reset();
@@ -70,9 +63,9 @@ const ContactForm = () => {
         Numer
         <input
           type="tel"
-          name="number"
+          name="phone"
           placeholder="459-12-56"
-          value={number}
+          value={phone}
           onChange={handleChange}
           pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
           required

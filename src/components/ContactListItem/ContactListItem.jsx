@@ -1,12 +1,23 @@
-import React from "react";
-import css from './ContactListItem.module.css'
+import React from 'react';
+import css from './ContactListItem.module.css';
+import { useDispatch } from 'react-redux';
+import { deleteContactThunk } from 'store/contacts/thunksContacts';
 
-const ContactListItem =({contact, onDeleteContact}) => (
-   <li key={contact.id} className={css.item}>
-     {contact.name} - {contact.number}
-     <button className={css.button} type='button' onClick={() => onDeleteContact(contact.id)}>Delete</button>
-   </li>
-)
+const ContactListItem = ({ item }) => {
+  const dispatch = useDispatch();
 
+  return (
+    <li key={item.id} className={css.item}>
+      {item.name} - {item.phone}
+      <button
+        className={css.button}
+        type="button"
+        onClick={() => dispatch(deleteContactThunk(item.id))}
+      >
+        Delete
+      </button>
+    </li>
+  );
+};
 
 export default ContactListItem;
